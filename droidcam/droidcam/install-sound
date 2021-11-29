@@ -1,0 +1,31 @@
+#!/bin/bash
+#
+REPO_PATH="$(/usr/bin/dirname $([ -L $0 ] && /bin/readlink -f $0 || echo $0))"
+source "${REPO_PATH}/install.common"
+
+check_if_installed
+
+echo "Loading Loopback device"
+modprobe snd-aloop || exit 1
+
+LOOPBACK_CARD_ID=$(grep -F "[Loopback" < /proc/asound/cards | awk '{print $1}')
+if [[ ! $(echo "$LOOPBACK_CARD_ID" | grep -E "^[0-9]$") ]]
+then
+	echo "Error: Could not determine Loopback card number"
+	exit 1
+fi
+
+if [ -d "/etc/modprobe.d/" ]; then
+	add_line "/etc/modprobe.d/droidcam.conf" "options snd-aloop index=$LOOPBACK_CARD_ID"
+fi
+
+if [ -d "/etc/modules-load.d" ]; then
+	add_line "/etc/modules-load.d/droidcam.conf" "snd-aloop"
+elif [ -e "/etc/modules" ]; then
+	add_line "/etc/modules" "snd-aloop"
+else
+	echo "Warning: Unknown distro. Sound card may not load after a reboot."
+fi
+
+echo "Done"
+echo "Use 'pacmd load-module module-alsa-source device=hw:Loopback,1,0' to load the card into PulseAudio while droidcam is running"

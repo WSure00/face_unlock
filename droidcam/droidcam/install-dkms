@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# Usage: ./install-dkms [640 480]
+
+set -e
+REPO_PATH="$(/usr/bin/dirname $([ -L $0 ] && /bin/readlink -f $0 || echo $0))"
+source "${REPO_PATH}/install.common"
+check_if_installed
+
+generate_dkms_conf() {
+    local target="$*"
+    cat <<EOF > "${target}"
+PACKAGE_NAME="${V4L2_LOOPBACK_DC}"
+PACKAGE_VERSION="${V4L2_LOOPBACK_VERSION}"
+CLEAN="make clean"
+MAKE[0]="make all KVERSION=$kernelver"
+BUILT_MODULE_NAME[0]="${V4L2_LOOPBACK_KM}"
+DEST_MODULE_LOCATION[0]="/updates"
+AUTOINSTALL="yes"
+EOF
+}
+
+setup_dkms_module() {
+    # Copying module dir with name expected by dkms in /usr/src
+    if [ -d "/usr/src/${V4L2_LOOPBACK_DC}-${V4L2_LOOPBACK_VERSION}" ] || [ -L "/usr/src/${V4L2_LOOPBACK_DC}-${V4L2_LOOPBACK_VERSION}" ]; then
+        rm -Rf "/usr/src/${V4L2_LOOPBACK_DC}-${V4L2_LOOPBACK_VERSION}"
+    fi
+    cp -a "${REPO_PATH}/${V4L2_LOOPBACK_DIR}" "/usr/src/${V4L2_LOOPBACK_DC}-${V4L2_LOOPBACK_VERSION}"
+    chown root:root "/usr/src/${V4L2_LOOPBACK_DC}-${V4L2_LOOPBACK_VERSION}" -R
+    generate_dkms_conf "/usr/src/${V4L2_LOOPBACK_DC}-${V4L2_LOOPBACK_VERSION}/dkms.conf"
+
+    dkms build -m ${V4L2_LOOPBACK_DC} -v ${V4L2_LOOPBACK_VERSION}
+    dkms install -m ${V4L2_LOOPBACK_DC} -v ${V4L2_LOOPBACK_VERSION}
+    if [ -f /etc/redhat-release ]; then
+        dkms mkrpm -m ${V4L2_LOOPBACK_DC} -v ${V4L2_LOOPBACK_VERSION}
+    elif [ -f /etc/debian_version ]; then
+        dkms mkdeb -m ${V4L2_LOOPBACK_DC} -v ${V4L2_LOOPBACK_VERSION}
+    else
+        echo "unsupported distro"
+        exit 1
+    fi
+}
+
+copy_uninstall_script() {
+    echo "Adding uninstall script in '/opt/droidcam-uninstall'"
+    mkdir -p /opt || true
+    cp "${REPO_PATH}/uninstall-dkms" /opt/droidcam-uninstall
+}
+
+# Here we go
+check_module_options "$1" "$2"
+
+copy_uninstall_script
+setup_dkms_module
+register_video_module_at_boot_time
+
+# Finally let's load the module
+modprobe ${V4L2_LOOPBACK_DC}
+
+echo 'Done'
+
+
