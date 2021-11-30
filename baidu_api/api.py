@@ -88,9 +88,11 @@ def face_compare():
 
 pid_pri()
 get_token()
-
+n=0
 while True:
+    n+=1
     time.sleep(0.1)
+    print(n)
     if os.system('gnome-screensaver-command -q | grep in') :
         #  检测摄像头读出的图片
         success,img=camera.read()
