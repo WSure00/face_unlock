@@ -81,6 +81,7 @@ get_token()
 
 while True:
     time.sleep(0.5)
+    os.system('/opt/vc/bin/tvservice -p')
     #  检测摄像头读出的图片
     success,img=camera.read()
     img_new=revert(img)
@@ -90,13 +91,13 @@ while True:
         print("ok")
         # print(noface_token)
         result=face_compare()
-        if result >=85:
+        if result >=80:
             if  os.system('gnome-screensaver-command -q | grep in') :
                 k=PyKeyboard()
                 k.tap_key(k.enter_key)
                 os.system('gnome-screensaver-command -d')
-        else:
-            os.system('gnome-screensaver-command -l')
+        # else:
+        #     os.system('gnome-screensaver-command -l')
     else:
         os.system('gnome-screensaver-command -l')
         print("no")
