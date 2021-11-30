@@ -90,33 +90,29 @@ pid_pri()
 get_token()
 
 while True:
-    time.sleep(0.5)
-    
-    #  检测摄像头读出的图片
-    success,img=camera.read()
-    img_new=revert(img)
-    base=img_base(img_new)
-    # base=str(base64.b64encode(cv2.imencode('.jpg',cv2.imread("./me.jpg"))[1]))[2:-1]  #检测单张图片
-    if face_info(base) :
-        print("ok")
-        # print(noface_token)
-        if  os.system('gnome-screensaver-command -q | grep in') :
+    time.sleep(0.1)
+    if os.system('gnome-screensaver-command -q | grep in') :
+        #  检测摄像头读出的图片
+        success,img=camera.read()
+        img_new=revert(img)
+        base=img_base(img_new)
+        # base=str(base64.b64encode(cv2.imencode('.jpg',cv2.imread("./me.jpg"))[1]))[2:-1]  #检测单张图片
+        if face_info(base) :
+            print("ok")
+            # print(noface_token)
+            # if os.system('gnome-screensaver-command -q | grep in') :
             result=face_compare()
             if result >=80:
-                
-                    k=PyKeyboard()
-                    k.tap_key(k.enter_key)
-                    print("unlock")
-                    os.system('gnome-screensaver-command -d')
-                    notify("FACE UNLOCK",""+"hello ,welcome back!")
+                k=PyKeyboard()
+                k.tap_key(k.enter_key)
+                print("unlock")
+                os.system('gnome-screensaver-command -d')
+                notify("FACE UNLOCK",""+"hello ,welcome back!")
         else:
-            time.sleep(2)
-        # else:
-        #     os.system('gnome-screensaver-command -l')
+            # os.system('gnome-screensaver-command -l')
+            print("no")
     else:
-        # os.system('gnome-screensaver-command -l')
-        print("no")
-    
+        time.sleep(5)
     # cv2.imshow('face', img_new)
     # if cv2.waitKey(1) & 0xFF == ord('q'):
     #     break
