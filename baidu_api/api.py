@@ -7,11 +7,11 @@ import os
 from pykeyboard import PyKeyboard
 from requests.models import requote_uri
 
-client_id='6ieHyjIspHNtcX9g79twV4sT'
-client_secret = 'G0X3zK8ZpQ6WmdeiXhlR8q5DBs1tjBVa'
+client_id = your client_id
+client_secret = client_secret
 access_token=''
-img_path='./img_44e2695e-91ac-43bb-9b71-cfe50155bd1l.jpeg'
-myface_token="774e76a9c092ab8c5a3e4c8c5f6eec35"
+img_path=''
+myface_token=""
 noface_token=""
 camera = cv2.VideoCapture(1)
 
