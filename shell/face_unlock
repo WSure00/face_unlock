@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source /home/mi/miniconda3/bin/activate face
+echo "conda ok"
+python ~/hdd_4t/practice/face_recognition/baidu_api/api.py
