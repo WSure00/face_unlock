@@ -32,9 +32,10 @@ def revert(img):
     return new_img
 
 def img_base(img):
-    os.system("rm -f io.jpg") 
+     
     img_np=cv2.imwrite("./io.jpg",img)
     img_base=cv2.imread("./io.jpg")
+    os.system("rm -f ./io.jpg")
     return str(base64.b64encode(cv2.imencode('.jpg',img_base)[1]))[2:-1]
 
 
@@ -99,15 +100,17 @@ while True:
     if face_info(base) :
         print("ok")
         # print(noface_token)
-        result=face_compare()
-        if result >=80:
-            if  os.system('gnome-screensaver-command -q | grep in') :
-                k=PyKeyboard()
-                k.tap_key(k.enter_key)
-                print("unlock")
-                os.system('gnome-screensaver-command -d')
-                notify("FACE UNLOCK","\n\nhello ,welcome back!")
+        if  os.system('gnome-screensaver-command -q | grep in') :
+            result=face_compare()
+            if result >=80:
                 
+                    k=PyKeyboard()
+                    k.tap_key(k.enter_key)
+                    print("unlock")
+                    os.system('gnome-screensaver-command -d')
+                    notify("FACE UNLOCK",""+"hello ,welcome back!")
+        else:
+            time.sleep(2)
         # else:
         #     os.system('gnome-screensaver-command -l')
     else:
