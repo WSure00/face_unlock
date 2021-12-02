@@ -13,7 +13,7 @@ access_token=''
 img_path='./img_44e2695e-91ac-43bb-9b71-cfe50155bd1l.jpeg'
 myface_token="774e76a9c092ab8c5a3e4c8c5f6eec35"
 noface_token=""
-camera = cv2.VideoCapture(1)
+camera = cv2.VideoCapture(0)
 
 def pid_pri():                #升级线程优先级
     import  psutil
@@ -38,6 +38,11 @@ def img_base(img):
     os.system("rm -f ./io.jpg")
     return str(base64.b64encode(cv2.imencode('.jpg',img_base)[1]))[2:-1]
 
+def numpy_to_base64(image_np): 
+    data = cv2.imencode('.jpg', image_np)[1]
+    image_bytes = data.tobytes()
+    image_base4 = base64.b64encode(image_bytes).decode('utf8')
+    return image_base4
 
 def get_token():
     global access_token
@@ -65,6 +70,9 @@ def face_info(base):
             noface_token=face_token
             # print(face_token)
         elif response.json()['error_msg'] ==  'pic not has face':   #检测到没有存在人脸
+            face_exsit=False
+        else :
+            print(response.json()['error_msg'])
             face_exsit=False
     return face_exsit
 
@@ -96,8 +104,9 @@ while True:
     if os.system('gnome-screensaver-command -q | grep in') :
         #  检测摄像头读出的图片
         success,img=camera.read()
+        print(success)
         img_new=revert(img)
-        base=img_base(img_new)
+        base=numpy_to_base64(img_new)
         # base=str(base64.b64encode(cv2.imencode('.jpg',cv2.imread("./me.jpg"))[1]))[2:-1]  #检测单张图片
         if face_info(base) :
             print("ok")
