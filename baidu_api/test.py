@@ -132,6 +132,7 @@ while True:
     else:
         # os.system('gnome-screensaver-command -l')
         print("no")
+        
     # else:
     #     time.sleep(5)
     # cv2.imshow('face', img_new)
@@ -140,4 +141,3 @@ while True:
     
 camera.release()
 # # cv2.destroyAllWindows()
-
