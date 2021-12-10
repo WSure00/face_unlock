@@ -49,6 +49,7 @@ def get_token():
     host = 'https://aip.baidubce.com/oauth/2.0/token?grant_type=client_credentials&client_id=%s&client_secret=%s'%(client_id,client_secret)
     response = requests.get(host)
     if response:
+        print('access_token:success!')
         access_token=response.json()["access_token"]
         # print(access_token)
     else:
@@ -65,14 +66,16 @@ def face_info(base):
     if response:
         # print(response.json())
         if response.json()['error_msg'] == 'SUCCESS':   #检测到存在人脸
+            print("face token success !")
             face_token=response.json()['result']['face_list'][0]['face_token']
             face_exsit=True
             noface_token=face_token
             # print(face_token)
         elif response.json()['error_msg'] ==  'pic not has face':   #检测到没有存在人脸
+            print("pic not has face")
             face_exsit=False
         else :
-            print(response.json()['error_msg'])
+            print("face detect failed :",response.json()['error_msg'])
             face_exsit=False
     return face_exsit
 
@@ -87,6 +90,7 @@ def face_compare():
     # if response:
     # print (response.json())
     if response.json()["error_msg"] == 'SUCCESS':
+        print("face_compaer success !")
         result=int(response.json()['result']['score'])
     else:
         result=0

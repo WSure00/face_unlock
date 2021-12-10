@@ -74,45 +74,68 @@ def face_info(base):
             face_exsit=False
     return face_exsit
 
+def face_compare():
+    
+    request_url = "https://aip.baidubce.com/rest/2.0/face/v3/match"
+    params =  [{"image": myface_token, "image_type": "FACE_TOKEN", "face_type": "LIVE", "quality_control": "LOW"},
+    {"image":noface_token, "image_type": "FACE_TOKEN", "face_type": "LIVE", "quality_control": "LOW"}]      #   %(myface_token,noface_token)
+    request_url = request_url + "?access_token=" + access_token
+    headers = {'content-type': 'application/json'}
+    response = requests.post(request_url, json=params, headers=headers)
+    # if response:
+    print ("face_compare: ",response.json())
+    if response.json()["error_msg"] == 'SUCCESS':
+        print("face_compaer success !")
+        result=int(response.json()['result']['score'])
+    else:
+        result=0
+        print("face_compare: error ")
+        print (response.json())
+    return result
+
 get_token()
 # img_re=revert(img)
 # base=str(base64.b64encode(cv2.imencode('.jpg',cv2.imread("./me.jpg"))[1]))[2:-1]
-img_new=cv2.imread("./me.jpg")
-base=numpy_to_base64(img_new)
-face_info(base)
+# img_new=cv2.imread("./me.jpg")
+# base=numpy_to_base64(img_new)
+# face_info(base)
 
 # img_re=revert(img)
 # print(numpy_to_base64(img_re))
 # print(type(img_base(img_re)))
-# while True:
-#     # n+=1
-#     time.sleep(0.1)
-#     # print(n)
-#     # if os.system('gnome-screensaver-command -q | grep in') :
-#         #  检测摄像头读出的图片
-#     success,img=camera.read()
-#     print(success)
-#     img_new=revert(img)
-#     base=numpy_to_base64(img_new)
-#     # base=str(base64.b64encode(cv2.imencode('.jpg',cv2.imread("./me.jpg"))[1]))[2:-1]  #检测单张图片
-#     if face_info(base) :
-#         print("ok")
-#         # print(noface_token)
-#         # if os.system('gnome-screensaver-command -q | grep in') :
-#         # result=face_compare()
-#         # if result >=80:
-#         #     k=PyKeyboard()
-#         #     k.tap_key(k.enter_key)
-#         #     print("unlock")
-#         #     os.system('gnome-screensaver-command -d')
-#         #     notify("FACE UNLOCK",""+"hello ,welcome back!")
-#     else:
-#         # os.system('gnome-screensaver-command -l')
-#         print("no")
-#     # else:
-#     #     time.sleep(5)
-#     # cv2.imshow('face', img_new)
-#     # if cv2.waitKey(1) & 0xFF == ord('q'):
-#     #     break
-# camera.release()
+
+
+while True:
+    # n+=1
+    time.sleep(0.5)
+    # print(n)
+    # if os.system('gnome-screensaver-command -q | grep in') :
+        #  检测摄像头读出的图片
+    success,img=camera.read()
+    print(success)
+    img_new=revert(img)
+    base=numpy_to_base64(img_new)
+    # base=str(base64.b64encode(cv2.imencode('.jpg',cv2.imread("./me.jpg"))[1]))[2:-1]  #检测单张图片
+    if face_info(base) :
+        print("ok")
+        print(noface_token)
+        result=face_compare()
+        # print(noface_token)
+        # if os.system('gnome-screensaver-command -q | grep in') :
+        # result=face_compare()
+        # if result >=80:
+        #     k=PyKeyboard()
+        #     k.tap_key(k.enter_key)
+        #     print("unlock")
+        #     os.system('gnome-screensaver-command -d')
+        #     notify("FACE UNLOCK",""+"hello ,welcome back!")
+    else:
+        # os.system('gnome-screensaver-command -l')
+        print("no")
+    # else:
+    #     time.sleep(5)
+    # cv2.imshow('face', img_new)
+    # if cv2.waitKey(1) & 0xFF == ord('q'):
+    #     break
+camera.release()
 # # cv2.destroyAllWindows()
