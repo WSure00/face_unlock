@@ -10,4 +10,5 @@ if your mobile phone is on android system, and other system based on android, yo
 to work.
     1)download app droidcam on your mobile phone
     2)install droidcam on your pc(on ubuntu, install packages is provided in folder "droidcam" )
-2.the following folder are not succussfully worked, just for test
+2.the following folder are not succussfully worked, just for test  
+# test web
